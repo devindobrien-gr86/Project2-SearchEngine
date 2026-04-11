@@ -1,0 +1,85 @@
+package searchengine;
+import java.util.*;
+
+/*
+ * This class is mostly for testing and the report part of the project.
+ * Use this for timing how long TF/IDF takes, how long searches take,
+ * and anything related to evaluating the engine.
+ * This isn't really the main user-facing part.
+ *
+ * This class should NOT IMPLEMENT UI FEATURES DIRECTLY, ONLY CALL THEM
+ */
+public class SearchSimulation {
+
+    /**
+     * The simulation runs (and will run upon completion) as follows:
+     * Excluding the user interface outside of the object, because all queries are pre-designed
+     * 1- nanosecond timer begins
+     * 2- TF and IDF are built for the tsv file, document can now be used for queries
+     * 3 - Timer ends for the TF and IDF building
+     * 4- For each query, the top 5 results are printed, ranked with precision
+     */
+    public static void main(String[] args) {
+
+        // load songs
+        TSVReader reader = new TSVReader();
+        List<Song> songs = reader.read("song_lyrics (2).tsv");
+
+        if (songs.isEmpty()) {
+            System.out.println("No songs loaded. Check the file path.");
+            return;
+        }
+
+        System.out.println("Songs loaded: " + songs.size());
+
+        // create engine and UI object
+        SearchEngine engine = new SearchEngine(songs);
+        UserInterface ui = new UserInterface(engine);
+
+        // time the TF/IDF build
+        long tfidStart = System.nanoTime();
+
+        engine.buildTF();
+        engine.buildIDF();
+
+        long tfidEnd = System.nanoTime();
+
+        // prints tf idf time
+        System.out.println("TF/IDF build time: " + (tfidEnd - tfidStart) + " ns \n");
+
+        // queries for the searches
+        // mix of: single word, multi word, rare word, very common word, gibberish
+        List<String> q = Arrays.asList(
+            "love",
+            "baby",
+            "love you",
+            "broken heart",
+            "triangle",
+            "lose yourself",
+            "california",
+            "massachusetts",
+            "the",
+            "itsfridayincaliforniahuhhudfihdsdjfnj"
+        );
+
+        // loops through queries, also times how long this takes
+        for (String query : q) {
+
+            long start = System.nanoTime();
+            List<Song> results = engine.search(query);
+            long end = System.nanoTime();
+
+            System.out.println("\nQuery: \"" + query + "\"");
+            System.out.println("Search time: " + (end - start) + " ns");
+
+            ui.displayResults(results);
+
+            double precision = ui.precisionAt5(results, query);
+            System.out.println("Precision@5: " + precision);
+        }
+
+        // hand off to interactive UI after simulation finishes
+        System.out.println("\n--- Launching Interactive Search ---");
+        ui.start();
+    }
+}
