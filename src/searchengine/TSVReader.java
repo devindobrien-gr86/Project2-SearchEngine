@@ -48,7 +48,8 @@ public class TSVReader {
 
 			while (scn.hasNextLine()) {
 
-				if (count >= 1500) break; // stop at 290k, at 300k we get error message
+				//you can change to like 500 for testing
+				if (count >= 500) break; // stop at 290k, at 300k we get error message
 
 				String line = scn.nextLine();
 				String[] parts = line.split("\t");

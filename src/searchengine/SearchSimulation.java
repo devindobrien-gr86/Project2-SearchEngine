@@ -23,7 +23,7 @@ public class SearchSimulation {
 
         // load songs
         TSVReader reader = new TSVReader();
-        List<Song> songs = reader.read("song_lyrics (2).tsv");
+        List<Song> songs = reader.read("song_lyrics.tsv");
 
         if (songs.isEmpty()) {
             System.out.println("No songs loaded. Check the file path.");
@@ -32,9 +32,8 @@ public class SearchSimulation {
 
         System.out.println("Songs loaded: " + songs.size());
 
-        // create engine and UI object
+        // create engine first — needed for TF/IDF build
         SearchEngine engine = new SearchEngine(songs);
-        UserInterface ui = new UserInterface(engine);
 
         // time the TF/IDF build
         long tfidStart = System.nanoTime();
@@ -44,8 +43,12 @@ public class SearchSimulation {
 
         long tfidEnd = System.nanoTime();
 
-        // prints tf idf time
-        System.out.println("TF/IDF build time: " + (tfidEnd - tfidStart) + " ns \n");
+        // create UI object after TF/IDF is built
+        UserInterface ui = new UserInterface(engine);
+
+        // prints tf idf time in both ns and ms for readability
+        System.out.println("TF/IDF build time: " + (tfidEnd - tfidStart) + " ns");
+        System.out.println("TF/IDF build time: " + (tfidEnd - tfidStart) / 1_000_000.0 + " ms\n");
 
         // queries for the searches
         // mix of: single word, multi word, rare word, very common word, gibberish
@@ -65,6 +68,8 @@ public class SearchSimulation {
         // loops through queries, also times how long this takes
         for (String query : q) {
 
+            System.out.println("----------------------------------------------");
+
             long start = System.nanoTime();
             List<Song> results = engine.search(query);
             long end = System.nanoTime();
@@ -74,12 +79,16 @@ public class SearchSimulation {
 
             ui.displayResults(results);
 
+            // precision@5 — how many of the top 5 actually contain the query
             double precision = ui.precisionAt5(results, query);
-            System.out.println("Precision@5: " + precision);
+            int relevant = (int)(precision * 5);
+            System.out.println("Precision@5: " + precision + " (" + relevant + "/5 relevant)");
         }
 
         // hand off to interactive UI after simulation finishes
-        System.out.println("\n--- Launching Interactive Search ---");
+        System.out.println("\n==============================================");
+        System.out.println("         SEARCH ENGINE - COS 161            ");
+        System.out.println("==============================================\n");
         ui.start();
     }
 }

@@ -19,7 +19,6 @@ public class SearchEngine extends AbstractSearchEngine {
     @Override
     public void buildTF() {
         for (Song song : songs) {
-            // doesn't completely prevent the crash but this is still better on memory allowing for 290k
 
             // Combine lyrics into one block of text and lowercase everything
             String text = song.getLyrics().toLowerCase();
@@ -36,6 +35,22 @@ public class SearchEngine extends AbstractSearchEngine {
                 // Increment the count for this word in this song
                 tf.get(word).put(song, tf.get(word).getOrDefault(song, 0) + 1);
             }
+
+            // Title boost enhancement
+            // words in the title are counted 3 extra times
+            // this means songs whose titles match the query rank higher
+            // example: searching "lose yourself" now ranks Eminem's song higher
+            String[] titleWords = song.getTitle().toLowerCase().split("[^a-zA-Z0-9]+");
+
+            for (String word : titleWords) {
+                if (word.isEmpty()) continue;
+
+                // if we havent seen this title word before, create a new sub map
+                tf.putIfAbsent(word, new HashMap<>());
+
+                // add 3 extra counts for each title word
+                tf.get(word).put(song, tf.get(word).getOrDefault(song, 0) + 3);
+            }
         }
     }
 
@@ -49,8 +64,12 @@ public class SearchEngine extends AbstractSearchEngine {
             // Count how many songs contain this term
             int songsWithTerm = tf.get(term).size();
 
-            // IDF = total songs / songs containing the term
-            double idfScore = (double) totalSongs / songsWithTerm;
+            // Log IDF enhancement
+            // original formula uses log to prevent common words from dominating scores
+            // without log, words like "the" and "love" overwhelm multi word queries
+            // example: searching "lose yourself" now ranks more relevant songs higher
+            // combined with the title boost in buildTF, this gives the best results
+            double idfScore = Math.log((double) totalSongs / songsWithTerm);
 
             idf.put(term, idfScore);
         }
