@@ -2,12 +2,11 @@ package searchengine;
 import java.util.*;
 
 /*
- * This class is mostly for testing and the report part of the project.
- * Use this for timing how long TF/IDF takes, how long searches take,
- * and anything related to evaluating the engine.
- * This isn't really the main user-facing part.
- *
- * This class should NOT IMPLEMENT UI FEATURES DIRECTLY, ONLY CALL THEM
+ * SearchSimulation will evaluate the search engine's efficiency and effectiveness.
+ * Times TF/IDF build, runs 10 pre-designed queries, prints results and precision@5.
+ * Hands off to the interactive UI after simulation completes where the user can search what they please
+ * Does not implement UI features directly — only calls them.
+ * @author Devin O'Brien and Dax Morin
  */
 public class SearchSimulation {
 

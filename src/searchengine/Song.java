@@ -2,10 +2,10 @@ package searchengine;
 
 
 /*
- * Note to brother
- * This class is just for storing one song from the TSV file.
- * Keep this one simple — just fields, constructor, getters, maybe toString.
- * Don’t put search logic or file reading in here.
+ * Song — stores a single song loaded from the TSV file.
+ * Just fields, constructor, getters, and toString.
+ * No search logic or file reading in here.
+ * @author Dax Morin
  */
 
 public class Song {

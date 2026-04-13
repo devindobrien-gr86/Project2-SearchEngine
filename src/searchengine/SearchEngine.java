@@ -6,16 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 /*
- * note
- * This is the main backend class.
- * This is where the actual search engine logic should go:
- * loading songs into the system, building TF/IDF, and ranking results.
- * If it has to do with how search works, it probably goes here.
- *
- * Replaced interface implementation with the Abstract class, which will implement the interface - dax
+ * This is the core TF-IDF search implementation.
+ * Builds term frequency and inverse document frequency maps from loaded songs,
+ * then ranks results by relevance score for any given query.
+ * Extends AbstractSearchEngine and implements the Searchable interface through it.
+ * @author Devin O'Brien
  */
 public class SearchEngine extends AbstractSearchEngine {
 
+    /**
+     * Builds the TF map from all loaded songs
+     * Also applies title boost enhancement, title words counted 3 extra times
+     */
     @Override
     public void buildTF() {
         for (Song song : songs) {
@@ -29,7 +31,7 @@ public class SearchEngine extends AbstractSearchEngine {
             for (String word : words) {
                 if (word.isEmpty()) continue;
 
-                // If we haven't seen this word before, create a new sub map
+                // If we haven't seen this word before we create a new sub map
                 tf.putIfAbsent(word, new HashMap<>());
 
                 // Increment the count for this word in this song
@@ -45,7 +47,7 @@ public class SearchEngine extends AbstractSearchEngine {
             for (String word : titleWords) {
                 if (word.isEmpty()) continue;
 
-                // if we havent seen this title word before, create a new sub map
+                // if we haven't seen this title word before, create a new sub map
                 tf.putIfAbsent(word, new HashMap<>());
 
                 // add 3 extra counts for each title word
@@ -54,6 +56,10 @@ public class SearchEngine extends AbstractSearchEngine {
         }
     }
 
+    /**
+     * Builds the IDF map using log formula
+     * Log prevents common words from dominating scores
+     */
     @Override
     public void buildIDF() {
         int totalSongs = songs.size();
@@ -75,16 +81,27 @@ public class SearchEngine extends AbstractSearchEngine {
         }
     }
 
-    // setter for song to be called in the search simulation
+    /**
+     * @param songs — sets the song list
+     * setter for song to be called in the search simulation
+     */
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
 
-    // Engine constructor
+    /**
+     * @param songs — loads songs into the engine on creation later
+     * Engine constructor
+     */
     public SearchEngine(List<Song> songs) {
         this.songs = songs;
     }
 
+    /**
+     * @param query which is simply the search query
+     * @return ranked list of songs by TF-IDF score
+     * Scores each song by summing TF * IDF for each query term
+     */
     @Override
     public List<Song> search(String query) {
         String[] terms = query.toLowerCase().split("[^a-zA-Z0-9]+");

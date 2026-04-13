@@ -5,18 +5,12 @@ import java.util.List;
 import java.util.Scanner;
 
 /*
- * Team note:
- * This class is for the part the user actually interacts with.
- * Stuff like welcome messages, asking for queries, showing results,
- * and exiting should all go here.
- * Don’t put the heavy backend search logic in this file.
+ * UserInterface will handle all user interaction with the search engine.
+ * Responsible for greeting, query loop, displaying results, and exit summary.
+ * No backend search logic in this class only calls SearchEngine methods.
+ * @author Dax Morin
  */
 
-/*
- * 
- * Note to brother
- * Nano implemented in main method, still working with it, its a huge WIP.
- */
 public class UserInterface {
     //@author Dax Morin
 
@@ -51,9 +45,7 @@ public class UserInterface {
      */
     private void greetUser() {
     	System.out.println("\nWelcome, " + userName + "!");
-    	System.out.println("Type your search query below.");
-    	System.out.println("Type EXIT to quit.\n");
-    	System.out.println("---------------------------------------------------------");
+    	System.out.println("Start your search query below.");
     }
 
     /**
@@ -62,6 +54,9 @@ public class UserInterface {
     private void runSearchLoop() {
     	
     	while (true) {
+    		System.out.println("--------------------------------------------------");
+    		System.out.println("\nType your next search.");
+    		System.out.println("If you want to exit type (EXIT)");
             System.out.print("\nSearch> ");
             String query = scn.nextLine();
            

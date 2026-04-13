@@ -3,21 +3,15 @@ package searchengine;
 import java.io.*;
 import java.util.*;
 
-// parse 290k lines to prevent the crash
-/*
- * Note to brother
- * This class should only handle reading the TSV file and turning each row into a Song.
- * Basically all file loading stuff goes here.
- * Don't put TF/IDF or user interaction in this class we will implement later.
- */
-public class TSVReader {
 
-	/*
-	 * I know you said not to touch tsvreader but a canadian friend of mine gave me an idea
-	 * bufferedreader is super efficient for our project, it skips a lot of the extra stuff a normal reader would use
-	 * I have a suggested design below, do what you want for it but I'm 99% sure that bufferedreader will be very fast
-	 * No offense if you delete it, it doesn't implement TF and IDF exactly how I want it to (if at all)
-	 */
+/*
+ * TSVReader — handles reading the TSV file and turning each row into a Song.
+ * All file loading goes here — no TF/IDF or UI logic in this class.
+ * Limited to 290k lines to prevent heap memory crash.
+ * @Author Devin O'Brien
+ */
+
+public class TSVReader {
 
 	/**
 	 * @param string
@@ -49,7 +43,7 @@ public class TSVReader {
 			while (scn.hasNextLine()) {
 
 				//you can change to like 500 for testing
-				if (count >= 500) break; // stop at 290k, at 300k we get error message
+				if (count >= 290000) break; // stop at 290k, at 300k we get error message
 
 				String line = scn.nextLine();
 				String[] parts = line.split("\t");

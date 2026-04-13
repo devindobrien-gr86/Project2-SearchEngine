@@ -6,7 +6,8 @@ import java.util.List;
  
  * This is just the interface.
  * Its job is to say what a search engine should be able to do.
- * Implemented for the grade as stated "interface used correctly"  
+ * Implemented for the grade as stated "interface used correctly" 
+ * @Author Devin O'Brien 
  */
 
 public interface Searchable  {
